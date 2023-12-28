@@ -2,7 +2,7 @@
   "name": "botanalytics-study-case",
   "version": "1.0.0",
   "description": "This is a backend project developed for a Botanalytics case study, featuring secure user authentication with registration, login, logout, bcrypt encryption, and JWT token authentication, complemented by comprehensive unit tests.",
-  "main": "index.js",
+  "main": "app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
