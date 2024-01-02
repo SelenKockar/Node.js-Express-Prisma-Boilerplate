@@ -1,9 +1,18 @@
-import express from "express";
-import { signupUser, loginUser } from "../controllers/auth.controller";
+import { Router, Request, Response } from "express";
+import {
+  signupUser,
+  loginUser,
+  logoutUser,
+} from "../controllers/auth.controller";
+import authenticate from "../middleware/authenticate";
 
-const router = express.Router();
+const router = Router();
 
-router.post("/signup", signupUser);
-router.post("/login", loginUser);
+router.post("/signup", (req: Request, res: Response) => signupUser(req, res));
+router.post("/login", (req: Request, res: Response) => loginUser(req, res));
+router.post("/logout",(req: Request, res: Response) => logoutUser(req, res));
+router.get("/protected", authenticate, (res: Response) => {
+  res.send("This is a protected area");
+});
 
 export default router;

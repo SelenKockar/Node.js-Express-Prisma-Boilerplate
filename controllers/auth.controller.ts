@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import { signTokens } from "../services/auth.service";
 
 const prisma = new PrismaClient();
 
@@ -38,7 +39,6 @@ export const loginUser = async (req: Request, res: Response) => {
       message: "User not found",
     });
   }
-
   const isCorrectPassword = await bcrypt.compare(password, user.password);
 
   if (!isCorrectPassword) {
@@ -46,5 +46,37 @@ export const loginUser = async (req: Request, res: Response) => {
       message: "Incorrect password",
     });
   }
-  return res.status(200).json({});
+
+  const { accessToken, refreshToken } = await signTokens(user);
+  // Create Access and Refresh tokens
+  res.cookie("accessToken", accessToken, {
+    expires: new Date(Date.now() + 15 * 60 * 1000),
+  });
+  res.cookie("refreshToken", refreshToken, {
+    expires: new Date(Date.now() + 60 * 60 * 1000),
+  });
+
+  res.json({
+    message: "Login successful",
+    accessToken,
+  });
+};
+
+interface LogoutRequestBody {
+  token: string;
+}
+
+export const logoutUser = async (
+  req: Request<{}, {}, LogoutRequestBody>,
+  res: Response
+) => {
+  // Reset the tokens
+  res.cookie("accessToken", "", {
+    expires: new Date(0),
+  });
+  res.cookie("refreshToken", "", {
+    expires: new Date(0),
+  });
+
+  res.status(200).json({ message: "Logout successful" });
 };
