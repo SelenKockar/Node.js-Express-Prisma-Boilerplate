@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import { passwordValidation, emailValidation } from "../schema/auth.schema";
 import { signTokens } from "../services/auth.service";
 
 const prisma = new PrismaClient();
@@ -8,6 +9,9 @@ const prisma = new PrismaClient();
 // Create new user
 export const signupUser = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
+
+  emailValidation.parse(email);
+  passwordValidation.parse(password);
 
   // Hash the password
   const saltRounds = 10;
@@ -34,7 +38,7 @@ export const loginUser = async (req: Request, res: Response) => {
     },
   });
 
-  if (!user) {
+  if (!user ) {
     return res.status(404).json({
       message: "User not found",
     });
@@ -43,7 +47,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
   if (!isCorrectPassword) {
     return res.status(400).json({
-      message: "Incorrect password",
+      message: "Incorrect username or password",
     });
   }
 
@@ -62,14 +66,7 @@ export const loginUser = async (req: Request, res: Response) => {
   });
 };
 
-interface LogoutRequestBody {
-  token: string;
-}
-
-export const logoutUser = async (
-  req: Request<{}, {}, LogoutRequestBody>,
-  res: Response
-) => {
+export const logoutUser = async (req: Request, res: Response) => {
   // Reset the tokens
   res.cookie("accessToken", "", {
     expires: new Date(0),

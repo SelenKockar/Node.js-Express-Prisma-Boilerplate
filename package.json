@@ -4,7 +4,7 @@
   "description": "This is a backend project developed for a Botanalytics case study, featuring secure user authentication with registration, login, logout, bcrypt encryption, and JWT token authentication, complemented by comprehensive unit tests.",
   "main": "app.ts",
   "scripts": {
-    "start": "npx ts-node-dev --respawn --transpile-only --exit-child app.ts",
+    "start": "npx ts-node-dev --respawn --transpile-only --exit-child src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:migrate:dev": "npx prisma migrate dev"
   },
@@ -24,7 +24,8 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
