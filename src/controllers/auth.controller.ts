@@ -1,9 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import { hashPassword } from "../services/auth.service";
+import {
+  comparePasswords,
+  hashPassword,
+  signTokens,
+} from "../services/auth.service";
 import { passwordValidation, emailValidation } from "../schema/auth.schema";
-import { signTokens } from "../services/auth.service";
-import * as bcrypt from 'bcrypt';
+
+
 
 const prisma = new PrismaClient();
 
@@ -44,12 +48,12 @@ export const loginUser = async (req: Request, res: Response) => {
     },
   });
 
-  if (!user ) {
+  if (!user) {
     return res.status(404).json({
       message: "User not found",
     });
   }
-  const isCorrectPassword = await bcrypt.compare(password, user.password);
+  const isCorrectPassword = await comparePasswords(password, user.password);
 
   if (!isCorrectPassword) {
     return res.status(400).json({

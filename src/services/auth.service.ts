@@ -29,3 +29,6 @@ export const signTokens = async (user: User) => {
     const saltRounds = 10;
     return bcrypt.hash(password, saltRounds);
   };
+  export const comparePasswords = async (password: string, hash: string) => {
+    return bcrypt.compare(password, hash);
+  };
