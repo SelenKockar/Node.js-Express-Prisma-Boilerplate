@@ -1,32 +1,38 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
+import { hashPassword } from "../services/auth.service";
 import { passwordValidation, emailValidation } from "../schema/auth.schema";
 import { signTokens } from "../services/auth.service";
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 // Create new user
 export const signupUser = async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
+  try {
+    const { username, email, password } = req.body;
 
-  emailValidation.parse(email);
-  passwordValidation.parse(password);
+    emailValidation.parse(email);
+    passwordValidation.parse(password);
 
-  // Hash the password
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
+    // Hash the password
+    const hashedPassword = await hashPassword(password);
 
-  await prisma.user.create({
-    data: {
-      username,
-      email: email.toLowerCase(),
-      password: hashedPassword,
-    },
-  });
-  res.status(201).json({
-    message: "Registiration is successful!",
-  });
+    await prisma.user.create({
+      data: {
+        username,
+        email: email.toLowerCase(),
+        password: hashedPassword,
+      },
+    });
+    res.status(201).json({
+      message: "Registration is successful!",
+    });
+  } catch (error) {
+    // Hata yönetimi burada yapılacak
+    console.error(error);
+    res.status(500).json({ message: "An error occurred" });
+  }
 };
 
 // Log in as an existing user

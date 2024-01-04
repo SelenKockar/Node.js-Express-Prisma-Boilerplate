@@ -1,6 +1,7 @@
 import { User } from "@prisma/client";
 import { signJwt } from "../utils/jwt";
 import dotenv from "dotenv";
+import * as bcrypt from 'bcrypt';
 
 export const signTokens = async (user: User) => {
     // Load environment variables
@@ -23,4 +24,8 @@ export const signTokens = async (user: User) => {
     });
   
     return { accessToken, refreshToken };
+  };
+  export const hashPassword = async (password: string): Promise<string> => {
+    const saltRounds = 10;
+    return bcrypt.hash(password, saltRounds);
   };
