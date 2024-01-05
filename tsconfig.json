@@ -13,6 +13,6 @@
     "rootDir": ".",
     "types": ["jest"]
   },
-  "include": ["src/**/*", "client.ts"],
+  "include": ["src/**/*", "client.ts", "tests"],
   "exclude": ["node_modules"]
 }
