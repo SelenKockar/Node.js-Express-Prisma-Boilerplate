@@ -41,16 +41,18 @@ describe("Auth Controller - signupUser", () => {
     };
   });
 
-  it("should successfully register a user", async () => {
+  it("should successfully sign up a user", async () => {
     await signupUser(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
       message: "Registration is successful!",
-    });
+    })
+    
+   
   });
 
-  it("should fail to register a user with an invalid email", async () => {
+  it("should fail to sign up a user with an invalid email", async () => {
     req.body.email = "invalidemail";
     await signupUser(req as Request, res as Response);
 
@@ -58,11 +60,13 @@ describe("Auth Controller - signupUser", () => {
     expect(res.json).toHaveBeenCalledWith(expect.any(Object));
   });
 
-  it("should fail to register a user with an invalid password", async () => {
-    req.body.password = "short";
+  it("should fail to signup a user with an invalid password", async () => {
+    req.body.password = "invalid";
     await signupUser(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(expect.any(Object));
   });
 });
+
+
