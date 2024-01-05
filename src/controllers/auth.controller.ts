@@ -24,7 +24,7 @@ export const signupUser = async (req: Request, res: Response) => {
     // Hash the password
     const hashedPassword = await hashPassword(password);
 
-    await prisma.user.create({
+     await prisma.user.create({
       data: {
         username,
         email: email.toLowerCase(),
@@ -78,12 +78,15 @@ export const loginUser = async (req: Request, res: Response) => {
     expires: new Date(Date.now() + 60 * 60 * 1000),
   });
 
-  res.json({
+  const loginResponse = {
     message: "Login successful",
     accessToken,
-  });
+  };
+
+  res.status(200).json(loginResponse);
 };
 
+// If necessary, refresh method provides the accessToken when its expired.
 /*export const refresh = async (
   req: Request,
   res: Response,
