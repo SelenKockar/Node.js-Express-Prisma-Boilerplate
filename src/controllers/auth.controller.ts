@@ -6,9 +6,11 @@ import {
   signTokens,
 } from "../services/auth.service";
 import { passwordValidation, emailValidation } from "../schema/auth.schema";
+import { signJwt, verifyJwt } from "../utils/jwt";
+import { NextFunction } from "express";
+import { ZodError } from "zod";
 
-
-
+require("dotenv").config();
 const prisma = new PrismaClient();
 
 // Create new user
@@ -33,8 +35,14 @@ export const signupUser = async (req: Request, res: Response) => {
       message: "Registration is successful!",
     });
   } catch (error) {
-    // Hata yönetimi burada yapılacak
-    console.error(error);
+    // Check if the error is a ZodError (validation error)
+    if (error instanceof ZodError) {
+      console.error("Validation error:", error);
+      return res.status(400).json({ message: error.errors[0].message });
+    }
+
+    // Handle other types of errors
+    console.error("Unexpected error:", error);
     res.status(500).json({ message: "An error occurred" });
   }
 };
@@ -75,6 +83,55 @@ export const loginUser = async (req: Request, res: Response) => {
     accessToken,
   });
 };
+
+/*export const refresh = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const refresh_token = req.cookies.refresh_token;
+    const message = "Could not refresh access token";
+
+    if (!refresh_token) {
+      // Handle error manually without using AppError
+      res.status(403).json({ error: message });
+      return;
+    }
+
+    const decoded = verifyJwt<{ sub: number }>(refresh_token, "refreshToken");
+
+    if (!decoded) {
+      // Handle error manually without using AppError
+      res.status(403).json({ error: message });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: decoded.sub,
+      },
+    });
+
+    if (!user) {
+      // Handle error manually without using AppError
+      res.status(403).json({ error: message });
+      return;
+    }
+
+    // Sign new access token
+    const access_token = signJwt({ sub: user.id }, "accessToken", {
+      expiresIn: `${process.env.ACCESS_TOKEN_EXPIRES_IN}m`,
+    });
+
+    // Send the new access token
+    res.json({ access_token });
+  } catch (error) {
+    // Handle any other errors manually
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+*/
 
 export const logoutUser = async (req: Request, res: Response) => {
   // Reset the tokens
