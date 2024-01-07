@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient, User } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { loginUser } from "../../src/controllers/auth.controller";
 import * as authService from "../../src/services/auth.service";
 
@@ -73,7 +73,7 @@ describe("Auth Controller - loginUser", () => {
     );
 
     // Check if the response status and body are correct
-    expect(res.status).toHaveBeenCalledWith(200); 
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       message: "Login successful",
       accessToken: "fake-access-token",

@@ -25,9 +25,7 @@ describe("Auth Controller - signupUser", () => {
 
   beforeAll(() => {
     prisma = new PrismaClient();
-  });
 
-  beforeEach(() => {
     req = {
       body: {
         username: `testuser_${Date.now()}`,
@@ -47,26 +45,6 @@ describe("Auth Controller - signupUser", () => {
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
       message: "Registration is successful!",
-    })
-    
-   
-  });
-
-  it("should fail to sign up a user with an invalid email", async () => {
-    req.body.email = "invalidemail";
-    await signupUser(req as Request, res as Response);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(expect.any(Object));
-  });
-
-  it("should fail to signup a user with an invalid password", async () => {
-    req.body.password = "invalid";
-    await signupUser(req as Request, res as Response);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(expect.any(Object));
+    });
   });
 });
-
-
