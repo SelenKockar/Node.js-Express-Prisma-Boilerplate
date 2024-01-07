@@ -1,30 +1,29 @@
 import { PrismaClient } from "@prisma/client";
-import { Request, Response } from "express";
+import { Request, Response, CookieOptions } from "express";
 import {
   comparePasswords,
   hashPassword,
   signTokens,
 } from "../services/auth.service";
-import { passwordValidation, emailValidation } from "../schema/auth.schema";
 import { signJwt, verifyJwt } from "../utils/jwt";
-import { NextFunction } from "express";
-import { ZodError } from "zod";
 
 require("dotenv").config();
 const prisma = new PrismaClient();
+
+const cookiesOptions: CookieOptions = {
+  httpOnly: true,
+  sameSite: "lax",
+  secure: false,
+};
 
 // Create new user
 export const signupUser = async (req: Request, res: Response) => {
   try {
     const { username, email, password } = req.body;
-
-    emailValidation.parse(email);
-    passwordValidation.parse(password);
-
     // Hash the password
     const hashedPassword = await hashPassword(password);
 
-     await prisma.user.create({
+    await prisma.user.create({
       data: {
         username,
         email: email.toLowerCase(),
@@ -35,14 +34,7 @@ export const signupUser = async (req: Request, res: Response) => {
       message: "Registration is successful!",
     });
   } catch (error) {
-    // Check if the error is a ZodError (validation error)
-    if (error instanceof ZodError) {
-      console.error("Validation error:", error);
-      return res.status(400).json({ message: error.errors[0].message });
-    }
-
     // Handle other types of errors
-    console.error("Unexpected error:", error);
     res.status(500).json({ message: "An error occurred" });
   }
 };
@@ -72,9 +64,11 @@ export const loginUser = async (req: Request, res: Response) => {
   const { accessToken, refreshToken } = await signTokens(user);
   // Create Access and Refresh tokens
   res.cookie("accessToken", accessToken, {
+    ...cookiesOptions,
     expires: new Date(Date.now() + 15 * 60 * 1000),
   });
   res.cookie("refreshToken", refreshToken, {
+    ...cookiesOptions,
     expires: new Date(Date.now() + 60 * 60 * 1000),
   });
 
@@ -86,12 +80,8 @@ export const loginUser = async (req: Request, res: Response) => {
   res.status(200).json(loginResponse);
 };
 
-// If necessary, refresh method provides the accessToken when its expired.
-/*export const refresh = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+// Can be used to refresh the access token and can be modified according to client-side needs.
+export const refresh = async (req: Request, res: Response) => {
   try {
     const refresh_token = req.cookies.refresh_token;
     const message = "Could not refresh access token";
@@ -123,18 +113,25 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     // Sign new access token
-    const access_token = signJwt({ sub: user.id }, "accessToken", {
-      expiresIn: `${process.env.ACCESS_TOKEN_EXPIRES_IN}m`,
-    });
+    const accessToken = signJwt(
+      {
+        userId: user.id,
+        username: user.username,
+        email: user.email,
+      },
+      "accessToken",
+      {
+        expiresIn: `${process.env.ACCESS_TOKEN_EXPIRES_IN}m`,
+      }
+    );
 
     // Send the new access token
-    res.json({ access_token });
+    res.json({ accessToken });
   } catch (error) {
     // Handle any other errors manually
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-*/
 
 export const logoutUser = async (req: Request, res: Response) => {
   // Reset the tokens
