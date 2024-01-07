@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npx ts-node-dev --respawn --transpile-only --exit-child src/app.ts",
     "test": "jest",
-    "db:migrate:dev": "npx prisma migrate dev"
+    "db:migrate:dev": "npx prisma migrate dev",
+    "db:generate": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
