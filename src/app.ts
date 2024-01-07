@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Response } from "express";
 import authRouter from "./routes/auth.routes";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -10,6 +10,14 @@ dotenv.config();
 const app = express();
 const port = 3000;
 app.use(cookieParser());
+
+// Testing
+app.get("/", async (_, res: Response) => {
+  res.status(200).json({
+    status: "success",
+    message: "Server is running",
+  });
+});
 
 // Body Parser
 app.use(express.json({ limit: "10kb" }));
@@ -27,3 +35,5 @@ app.use("/auth", authRouter);
 app.listen(port, () => {
   console.log(`Server on port: ${port}`);
 });
+
+export default app;
