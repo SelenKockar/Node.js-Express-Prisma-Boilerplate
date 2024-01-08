@@ -3,11 +3,7 @@
 
 This is a backend project developed for a Botanalytics case study, featuring secure user authentication with registration, login, logout, bcrypt encryption, and JWT token authentication, complemented by comprehensive unit tests.
 
-## Enviroment Variables
-
-To run this project, you need to configure the required environment variables by renaming the `.env.example` file. Simply remove the **.example** extension to create your `.env` file with your specific settings.
-
-## Installation
+## Getting Started
 
 Clone the Project:
 
@@ -20,6 +16,12 @@ Navigate to the Project Directory:
 ```bash
   cd botanalytics-study-case
 ```
+
+## Enviroment Variables
+
+To run this project, you need to configure the required environment variables by renaming the `.env.example` file. Simply remove the **.example** extension to create your `.env` file with your specific settings.
+
+## Installation
 
 Install Dependencies:
 
@@ -36,7 +38,7 @@ Build, Fetch, and Run Docker Containers:
 Generate the Prisma Client:
 
 ```bash
-  npm run generate
+  npm run db:generate
 ```
 
 Migrate Database with Prisma:
