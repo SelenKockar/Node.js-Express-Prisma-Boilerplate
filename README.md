@@ -8,7 +8,7 @@ This is a backend project developed for a Botanalytics case study, featuring sec
 Clone the Project:
 
 ```bash
-  git clone https://github.com/SelenKockar/botanalytics-study-case.git
+  git clone https://github.com/SelenKockar/Node.js-Express-Prisma-Boilerplate.git
 ```
 
 Navigate to the Project Directory:
