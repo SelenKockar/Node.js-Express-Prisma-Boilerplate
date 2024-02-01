@@ -14,7 +14,7 @@ Clone the Project:
 Navigate to the Project Directory:
 
 ```bash
-  cd botanalytics-study-case
+  cd Node.js-Express-Prisma-Boilerplate
 ```
 
 ## Enviroment Variables
